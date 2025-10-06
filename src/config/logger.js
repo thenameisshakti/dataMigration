@@ -1,10 +1,15 @@
-import pino from "pino";
-import { config } from "./config.js";
+const pino = require("pino");
+const { config } = require("./config.js");
 
-export const logger = pino({
-  level: config.logLevel,
+const logger = pino({
+  level: config.logLevel || "info",
   transport: {
     target: "pino-pretty",
-    options: { colorize: true, translateTime: "SYS:standard" }
-  }
+    options: {
+      colorize: true,
+      translateTime: "SYS:standard",
+    },
+  },
 });
+
+module.exports = logger;

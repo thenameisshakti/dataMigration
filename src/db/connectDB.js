@@ -1,15 +1,30 @@
-const mongoose = require("mongoose")
-const getEnv = require("../config/config.js")
-const connectDB = async() => {
-    const DB_Name = "Data_Migration"
-    const mongodbUri = "MONGODB_URI"
-        try {
-            const connecitonInstance = await mongoose.connect(`${getEnv(mongodbUri)}/${DB_Name}`)
-            console.log("connnection Instance has been created", connecitonInstance.connection.host)
-        } catch(error) {
-            console.log("error in creating the instance ", error )
-            process.exit(1)
-        }
+const { MongoClient } = require("mongodb");
+const { config } = require("../config/config.js");
+const logger = require("../config/logger.js");
+
+let client;
+let db;
+
+async function connect() {
+  if (db) return db;
+
+  client = new MongoClient(config.mongoUri, { maxPoolSize: 20 });
+
+  await client.connect();
+  db = client.db(config.dbName);
+
+  logger.info("✅ Connected to MongoDB");
+  return db;
 }
 
-module.exports = connectDB
+async function close() {
+  if (client) {
+    await client.close();
+    logger.info("🔒 MongoDB connection closed");
+  }
+}
+
+module.exports = {
+  connect,
+  close,
+};

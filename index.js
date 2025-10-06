@@ -1,12 +1,11 @@
 const dotenv = require("dotenv")
-const connectDB = require('./src/db/connectDB.js')
+const {connect} = require('./src/db/connectDB.js')
 const app = require('./app.js')
-const getEnv = require('./src/config/config.js')
 
-const PORT = getEnv("PORT")
-console.log(PORT)
+const PORT = 3000
 
- connectDB()
+
+ connect()
  .then (() => {
     app.listen(PORT || 3000 , () => {
         console.log(` server is listening at the :: ${PORT}`)
